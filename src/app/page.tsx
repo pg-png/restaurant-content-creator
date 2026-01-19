@@ -261,7 +261,7 @@ export default function Home() {
         imageUrl = data.imageUrl;
         console.log("Setting imageUrl to:", imageUrl);
         // Add to gallery on success
-        addToGallery(imageUrl, prompt, originalImageUrl);
+        addToGallery(data.imageUrl, prompt, originalImageUrl);
       } else if (data.status === "waiting" || data.status === "processing") {
         content = `Image is still processing (status: ${data.status}). The AI needs more time - try again in 30 seconds or use a smaller image.`;
       } else if (data.status === "failed") {
