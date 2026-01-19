@@ -528,7 +528,7 @@ export default function Home() {
             </div>
 
             <p className="text-center text-xs text-white/40 mt-3">
-              Powered by <a href="https://instagram.com/AIrestohub" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300">WWITHai</a> • Follow <a href="https://instagram.com/AIrestohub" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300">@AIrestohub</a>
+              Powered by <a href="https://instagram.com/AIrestohub" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300">WwithAI</a> • Follow <a href="https://instagram.com/AIrestohub" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300">@AIrestohub</a>
             </p>
           </div>
         </>

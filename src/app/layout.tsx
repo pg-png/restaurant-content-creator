@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Restaurant Content Creator | WWITHai Demo",
-  description: "Transform your empty restaurant photos with AI. Add realistic diners for marketing materials. Powered by WWITHai.",
+  title: "Restaurant Content Creator | WwithAI Demo",
+  description: "Transform your empty restaurant photos with AI. Add realistic diners for marketing materials. Powered by WwithAI.",
 };
 
 export default function RootLayout({
