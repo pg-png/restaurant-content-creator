@@ -68,28 +68,68 @@ export default function Home() {
     scrollToBottom();
   }, [messages]);
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Compress image to max 500KB for faster upload and processing
+  const compressImage = (file: File, maxSizeKB: number = 500): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let { width, height } = img;
+
+          // Scale down to max 1500px for faster AI processing
+          const maxDim = 1500;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height / width) * maxDim);
+              width = maxDim;
+            } else {
+              width = Math.round((width / height) * maxDim);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          // Start with quality 0.7 and reduce if needed
+          let quality = 0.7;
+          let result = canvas.toDataURL("image/jpeg", quality);
+
+          // Reduce quality until under target size
+          while (result.length > maxSizeKB * 1024 && quality > 0.2) {
+            quality -= 0.1;
+            result = canvas.toDataURL("image/jpeg", quality);
+          }
+
+          console.log(`Compressed: ${width}x${height}, quality=${quality.toFixed(1)}, size=${Math.round(result.length/1024)}KB`);
+          resolve(result);
+        };
+        img.src = event.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedImageFile(file);
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setSelectedImage(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      const compressed = await compressImage(file);
+      setSelectedImage(compressed);
     }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith("image/")) {
       setSelectedImageFile(file);
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setSelectedImage(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      const compressed = await compressImage(file);
+      setSelectedImage(compressed);
     }
   };
 
@@ -138,6 +178,24 @@ export default function Home() {
       });
 
       const data = await response.json();
+      console.log("API Response (full):", JSON.stringify(data, null, 2));
+      console.log("Success:", data.success, "ImageUrl:", data.imageUrl);
+
+      // Determine message based on status
+      let content = "";
+      let imageUrl: string | undefined = undefined;
+
+      if (data.success === true && data.imageUrl && data.imageUrl.length > 0) {
+        content = "Here's your transformed image!";
+        imageUrl = data.imageUrl;
+        console.log("Setting imageUrl to:", imageUrl);
+      } else if (data.status === "waiting" || data.status === "processing") {
+        content = `Image is still processing (status: ${data.status}). The AI needs more time - try again in 30 seconds or use a smaller image.`;
+      } else if (data.status === "failed") {
+        content = `Generation failed: ${data.debug?.failMsg || "Unknown error"}. Please try with a different image.`;
+      } else {
+        content = `Something went wrong. Status: ${data.status || "unknown"}, Success: ${data.success}. Debug: ${JSON.stringify(data.debug || {})}`;
+      }
 
       // Update loading message with result
       setMessages((prev) =>
@@ -146,10 +204,8 @@ export default function Home() {
             ? {
                 ...msg,
                 isLoading: false,
-                content: data.success
-                  ? "Here's your transformed image!"
-                  : "Sorry, something went wrong. Please try again.",
-                imageUrl: data.success ? data.imageUrl : undefined,
+                content,
+                imageUrl,
               }
             : msg
         )
@@ -226,7 +282,7 @@ export default function Home() {
                   <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
                   <div>
                     <p className="text-white/80">Creating your image...</p>
-                    <p className="text-xs text-white/50 mt-1">This may take 15-30 seconds</p>
+                    <p className="text-xs text-white/50 mt-1">This may take 30-60 seconds</p>
                   </div>
                 </div>
               ) : (
