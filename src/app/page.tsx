@@ -127,8 +127,8 @@ export default function Home() {
     }
   };
 
-  // Compress image to max 500KB for faster upload and processing
-  const compressImage = (file: File, maxSizeKB: number = 500): Promise<string> => {
+  // Compress image to max 300KB for faster upload and AI processing
+  const compressImage = (file: File, maxSizeKB: number = 300): Promise<string> => {
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -137,8 +137,8 @@ export default function Home() {
           const canvas = document.createElement("canvas");
           let { width, height } = img;
 
-          // Scale down to max 1500px for faster AI processing
-          const maxDim = 1500;
+          // Scale down to max 1200px for faster AI processing
+          const maxDim = 1200;
           if (width > maxDim || height > maxDim) {
             if (width > height) {
               height = Math.round((height / width) * maxDim);
@@ -154,12 +154,12 @@ export default function Home() {
           const ctx = canvas.getContext("2d");
           ctx?.drawImage(img, 0, 0, width, height);
 
-          // Start with quality 0.7 and reduce if needed
-          let quality = 0.7;
+          // Start with quality 0.6 and reduce if needed
+          let quality = 0.6;
           let result = canvas.toDataURL("image/jpeg", quality);
 
           // Reduce quality until under target size
-          while (result.length > maxSizeKB * 1024 && quality > 0.2) {
+          while (result.length > maxSizeKB * 1024 && quality > 0.15) {
             quality -= 0.1;
             result = canvas.toDataURL("image/jpeg", quality);
           }
