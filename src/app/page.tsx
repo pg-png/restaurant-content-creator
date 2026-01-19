@@ -228,9 +228,9 @@ export default function Home() {
       console.log("Sending request to:", N8N_WEBHOOK_URL);
       console.log("Image size:", Math.round(base64Data.length / 1024), "KB");
 
-      // Use AbortController with 90 second timeout (AI processing takes time)
+      // Use AbortController with 120 second timeout (AI processing takes time)
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 90000);
+      const timeoutId = setTimeout(() => controller.abort(), 120000);
 
       const response = await fetch(N8N_WEBHOOK_URL, {
         method: "POST",
@@ -287,7 +287,7 @@ export default function Home() {
       console.error("Fetch error:", error);
       const errorMessage = error instanceof Error
         ? (error.name === 'AbortError'
-          ? "Request timed out (90s). The AI is taking longer than expected. Please try again."
+          ? "Request timed out (120s). The AI is taking longer than expected. Please try again."
           : `Error: ${error.message}`)
         : "Connection error. Please check your network and try again.";
 
