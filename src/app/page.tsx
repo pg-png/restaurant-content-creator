@@ -66,7 +66,7 @@ export default function Home() {
     {
       id: "welcome",
       type: "system",
-      content: "Welcome! Drop a photo of your restaurant space and I'll help transform it with AI-generated content. Choose a preset or describe what you'd like to see.",
+      content: "Welcome to the Restaurant Content Creator Demo! Upload a photo of your EMPTY restaurant and watch AI fill it with realistic diners. Perfect for marketing materials when you can't do a real photoshoot. Choose a preset style or describe your vision!",
       timestamp: new Date(),
     },
   ]);
@@ -506,8 +506,8 @@ export default function Home() {
                 }}
                 placeholder={
                   selectedImage
-                    ? "Describe how you want to transform this image..."
-                    : "First, drop or select an image of your restaurant..."
+                    ? "Describe the diners you want to add..."
+                    : "First, upload a photo of your EMPTY restaurant..."
                 }
                 disabled={isProcessing}
                 className="flex-1 bg-transparent text-white placeholder-white/40 resize-none outline-none text-sm min-h-[44px] max-h-32"
@@ -528,7 +528,7 @@ export default function Home() {
             </div>
 
             <p className="text-center text-xs text-white/40 mt-3">
-              Powered by Nano Banana AI • Drop an image or click the image icon to upload
+              Powered by <a href="https://twitter.com/AIrestohub" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300">WWITHai</a> • Follow <a href="https://twitter.com/AIrestohub" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300">@AIrestohub</a>
             </p>
           </div>
         </>
